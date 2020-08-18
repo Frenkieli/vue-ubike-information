@@ -1,15 +1,25 @@
 <template>
   <div id="app">
-    <searchBar />
-    <UbikeTable 
-      :ubikeStops="ubikeStops"
+    <searchBar 
+      v-model:conditionNameProp="conditionName" 
+      @page-change-event="pageChangeEvent" 
     />
-    <pagiation/>
+    <UbikeTable
+      :conditionNameProp="conditionName"
+      :ubikeStops="ubikeStops"
+      :currentPage="currentPage"
+      @pagiation-total-event="pagiationTotalEvent"
+    />
+    <pagiation
+      :conditionName="conditionName"
+      :pagiationTotalProp="pagiationTotal"
+      @page-change-event="pageChangeEvent"
+    />
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+
 import searchBar from "./components/searchBar";
 import UbikeTable from "./components/UbikeTable";
 import pagiation from "./components/pagiation";
@@ -19,12 +29,23 @@ export default {
   components: {
     searchBar,
     UbikeTable,
-    pagiation
+    pagiation,
   },
   data() {
     return {
       ubikeStops: [],
+      currentPage: 0,
+      pagiationTotal: 0,
+      conditionName: "",
     };
+  },
+  methods: {
+    pageChangeEvent(currentPage) {
+      this.currentPage = currentPage;
+    },
+    pagiationTotalEvent(pagiationTotal) {
+      this.pagiationTotal = pagiationTotal;
+    },
   },
   created() {
     // 欄位說明請參照:
@@ -43,6 +64,7 @@ export default {
       });
   },
 };
+
 </script>
 
 <style>

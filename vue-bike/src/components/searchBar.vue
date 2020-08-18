@@ -15,29 +15,38 @@
       v-model="conditionName"
       @keydown.enter="searchStart"
     >
-    <button type="submit" class="btn btn-primary" @click="searchStart">search</button>
+    <button 
+      type="submit" 
+      class="btn btn-primary" 
+      @click="searchStart"
+    >search</button>
   </div>
 </template>
 
 <script>
-import emitter from '../bus';
 
 export default {
   name: 'searchBar',
+  props: {
+    conditionNameProp:{
+      type: String
+    }
+  },
   data() {
     return {
-      conditionName : ''
+      conditionName : this.conditionNameProp
     }
   },
   created() {
   },
   methods: {
     searchStart(){
-      console.log('觸發');
+      // console.log('觸發');
       let vm = this;
-      emitter.emit('searchEvent', vm.conditionName);
-      emitter.emit('pageChangeEvent', 0);
+      vm.$emit('update:conditionNameProp', vm.conditionName);
+      vm.$emit('page-change-event', 0);
     }
   },
 }
+
 </script>

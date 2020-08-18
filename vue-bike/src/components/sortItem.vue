@@ -13,7 +13,9 @@
 </template>
 
 <script>
+
 export default {
+  name: 'sortItem',
   props: {
     show: {
       type: Boolean
@@ -23,6 +25,7 @@ export default {
     }
   },
 };
+
 </script>
 
 <style scoped>

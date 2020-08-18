@@ -9,43 +9,43 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th
-        @click="sortConditionChange('sno')"
-        >
-          <div class="d-flex cursor-pointer">#
-            <sortItem
-              :show="conditionSortIdentify === 'sno'"
-              :upDown="conditionSortUpdown"
+        <th @click="sortConditionChange('sno')">
+          <div class="d-flex cursor-pointer">
+            #
+            <sortItem 
+              :show="conditionSortIdentify === 'sno'" 
+              :upDown="conditionSortUpdown" 
             />
           </div>
         </th>
         <th>場站名稱</th>
         <th>場站區域</th>
-        <th
-          @click="sortConditionChange('sbi')"
-        >
-          <div class="d-flex cursor-pointer">目前可用車輛
-            <sortItem
-              :show="conditionSortIdentify === 'sbi'"
+        <th @click="sortConditionChange('sbi')">
+          <div class="d-flex cursor-pointer">
+            目前可用車輛
+            <sortItem 
+              :show="conditionSortIdentify === 'sbi'" 
               :upDown="conditionSortUpdown"
             />
-          </div>  
+          </div>
         </th>
-        <th
-          @click="sortConditionChange('tot')"
-        >
-          <div class="d-flex cursor-pointer">總停車格
-            <sortItem
-              :show="conditionSortIdentify === 'tot'"
-              :upDown="conditionSortUpdown"
+        <th @click="sortConditionChange('tot')">
+          <div class="d-flex cursor-pointer">
+            總停車格
+            <sortItem 
+              :show="conditionSortIdentify === 'tot'" 
+              :upDown="conditionSortUpdown" 
             />
-          </div>  
+          </div>
         </th>
         <th>資料更新時間</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="s in sortFilterUbikeStops" :key="s.sno">
+      <tr 
+        v-for="s in sortFilterUbikeStops" 
+        :key="s.sno"
+      >
         <td>{{ s.sno }}</td>
         <td v-html="s.sna"></td>
         <!-- <td v-html="s.snaL"></td> -->
@@ -59,47 +59,72 @@
 </template>
 
 <script>
-import emitter from '../bus';
-import sortItem from './sortItem';
+
+import sortItem from "./sortItem";
 export default {
+  name: "UbikeTable",
   components: {
-    sortItem
+    sortItem,
   },
   props: {
     ubikeStops: {
-      type: Object,
+      type: Array,
+    },
+    currentPage: {
+      type: Number,
+    },
+    conditionNameProp: {
+      type: String,
     },
   },
   data() {
     return {
-      conditionName: '',
-      conditionSortIdentify: 'sno', // sno, sbi, tot,
-      conditionSortUpdown: false, // true up false down 
-      pagiationNow: 0
+      conditionName: "",
+      conditionSortIdentify: "sno", // sno, sbi, tot,
+      conditionSortUpdown: false, // true up false down
+      pagiationNow: 0,
     };
   },
   computed: {
-    filterUbikeStops:({ubikeStops, conditionName})=>{
-      return JSON.parse(JSON.stringify(ubikeStops)).filter(v=>{
-        return (v.sna.indexOf(conditionName) !== -1)
-      }).map(v=>{
-        if(conditionName) v.sna = v.sna.replace(conditionName, '<span class="bg-dark text-white">' + conditionName +'</span>');
-        return v
-      })
+    filterUbikeStops: ({ ubikeStops, conditionName }) => {
+      return JSON.parse(JSON.stringify(ubikeStops))
+        .filter((v) => {
+          return v.sna.indexOf(conditionName) !== -1;
+        })
+        .map((v) => {
+          if (conditionName)
+            v.sna = v.sna.replace(
+              conditionName,
+              '<span class="bg-dark text-white">' + conditionName + "</span>"
+            );
+          return v;
+        });
     },
-    sortFilterUbikeStops({filterUbikeStops, conditionSortIdentify, conditionSortUpdown, pagiationNow}){
-      return [...filterUbikeStops].sort((a, b)=>{
-        return (a[conditionSortIdentify] - b[conditionSortIdentify]) * (conditionSortUpdown ? -1 : 1)
-      }).splice(pagiationNow * 10, 10);
+    sortFilterUbikeStops({filterUbikeStops, conditionSortIdentify, conditionSortUpdown, pagiationNow}) {
+      return [...filterUbikeStops]
+        .sort((a, b) => {
+          return (
+            (a[conditionSortIdentify] - b[conditionSortIdentify]) *
+            (conditionSortUpdown ? -1 : 1)
+          );
+        })
+        .splice(pagiationNow * 10, 10);
     },
-    pagiationTotal({filterUbikeStops}){
-      return Math.floor((filterUbikeStops.length) / 10) + 1
-    }
+    pagiationTotal({ filterUbikeStops }) {
+      return Math.floor(filterUbikeStops.length / 10) + 1;
+    },
   },
-  watch:{
-    pagiationTotal(val){
-      emitter.emit('pagiationTotalEvent', val);
-    }
+  watch: {
+    pagiationTotal(val) {
+      this.$emit("pagiation-total-event", val);
+    },
+    currentPage(val) {
+      this.pagiationNow = val;
+    },
+    conditionNameProp(val) {
+      // console.log("val", "有來嗎");
+      this.filterUbikeStop(val);
+    },
   },
   methods: {
     timeFormat(t) {
@@ -114,35 +139,30 @@ export default {
 
       return date.join("/") + " " + time.join(":");
     },
-    filterUbikeStop(conditionName){
-      console.log(conditionName, '追尋');
-      console.log(this)
+    filterUbikeStop(conditionName) {
+      // console.log(conditionName, "追尋");
+      // console.log(this);
       this.conditionName = conditionName;
     },
-    sortConditionChange(sortIdentify){
+    sortConditionChange(sortIdentify) {
       let vm = this;
-      if(sortIdentify === vm.conditionSortIdentify){
+      if (sortIdentify === vm.conditionSortIdentify) {
         vm.conditionSortUpdown = !vm.conditionSortUpdown;
-      }else{
+      } else {
         vm.conditionSortIdentify = sortIdentify;
       }
-
     },
-    changePage(page){
+    changePage(page) {
       let vm = this;
       vm.pagiationNow = page;
-    }
-  },
-  created() {
-    let vm = this;
-    emitter.on('searchEvent', vm.filterUbikeStop);
-    emitter.on('pageChangeEvent', vm.changePage);
+    },
   },
 };
+
 </script>
 
 <style scoped>
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
 }
 </style>

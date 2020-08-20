@@ -9,12 +9,13 @@
   <div class="form-inline">
     <label for="searchName">搜尋站點:</label>
     <input 
+      ref="searchName"
       id="searchName"
       class="form-control" 
       type="text" 
       v-model="conditionName"
+      @keydown="searchStart"
     >
-      <!-- @keydown="searchStart" -->
     <button 
       type="submit" 
       class="btn btn-primary" 
@@ -46,21 +47,22 @@ export default {
         let vm = this;
         vm.$emit('update:conditionNameProp', val);
         vm.$emit('page-change-event', 0);
-        // console.log(Date.now(), '設定');
+        console.log(Date.now(), '設定');
       }
     }
   },
   methods: {
-    // searchStart(){
-    //   // console.log('觸發');
-    //   let vm = this;
-    //   console.log('觸發');
-    //   vm.$nextTick(function(){
-    //     console.log(Date.now(), '刷新');
-    //     // vm.$emit('update:conditionNameProp', vm.conditionName);
-    //     // vm.$emit('page-change-event', 0);
-    //   })
-    // }
+    searchStart(){
+      // console.log('觸發');
+      let vm = this;
+      console.log('觸發');
+      vm.$nextTick(function(){
+        // console.log(Date.now(), '刷新', e.target.value);
+        console.log(Date.now(), '刷新', vm.$refs.searchName.value);
+        // vm.$emit('update:conditionNameProp', vm.conditionName);
+        // vm.$emit('page-change-event', 0);
+      })
+    }
   },
   beforeUpdate(){
     console.log(Date.now(), '更新前');

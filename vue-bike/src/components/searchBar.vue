@@ -13,8 +13,8 @@
       class="form-control" 
       type="text" 
       v-model="conditionName"
-      @keydown.enter="searchStart"
     >
+      <!-- @keydown="searchStart" -->
     <button 
       type="submit" 
       class="btn btn-primary" 
@@ -32,21 +32,39 @@ export default {
       type: String
     }
   },
-  data() {
-    return {
-      conditionName : this.conditionNameProp
+  // data() {
+  //   return {
+  //     conditionName : this.conditionNameProp
+  //   }
+  // },
+  computed:{
+    conditionName: {
+      get: function({conditionNameProp}){
+        return conditionNameProp;
+      },
+      set: function(val){
+        let vm = this;
+        vm.$emit('update:conditionNameProp', val);
+        vm.$emit('page-change-event', 0);
+        // console.log(Date.now(), '設定');
+      }
     }
-  },
-  created() {
   },
   methods: {
-    searchStart(){
-      // console.log('觸發');
-      let vm = this;
-      vm.$emit('update:conditionNameProp', vm.conditionName);
-      vm.$emit('page-change-event', 0);
-    }
+    // searchStart(){
+    //   // console.log('觸發');
+    //   let vm = this;
+    //   console.log('觸發');
+    //   vm.$nextTick(function(){
+    //     console.log(Date.now(), '刷新');
+    //     // vm.$emit('update:conditionNameProp', vm.conditionName);
+    //     // vm.$emit('page-change-event', 0);
+    //   })
+    // }
   },
+  beforeUpdate(){
+    console.log(Date.now(), '更新前');
+  }
 }
 
 </script>

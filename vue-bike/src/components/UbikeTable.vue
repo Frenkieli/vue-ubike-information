@@ -60,12 +60,8 @@
 
 <script>
 
-import sortItem from "./sortItem";
 export default {
   name: "UbikeTable",
-  components: {
-    sortItem,
-  },
   props: {
     ubikeStops: {
       type: Array,
@@ -157,6 +153,9 @@ export default {
       vm.pagiationNow = page;
     },
   },
+  beforeUpdate(){
+    console.log(Date.now(), '更新前,table');
+  }
 };
 
 </script>

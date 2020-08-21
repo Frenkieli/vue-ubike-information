@@ -16,6 +16,7 @@
       @page-change-event="pageChangeEvent"
     />
   </div>
+  <domTest/>
 </template>
 
 <script>
